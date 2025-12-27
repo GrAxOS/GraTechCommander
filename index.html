@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GraTech Commander</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Fira+Code&family=Noto+Sans+JP:wght@400;700&family=Noto+Sans+KR:wght@400;700&family=Noto+Sans+SC:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Top Bar -->
+    <div class="top-bar">
+      <div class="language-selector">
+        <select id="language-select">
+          <option value="ar">🇸🇦 العربية</option>
+          <option value="en">🇺🇸 English</option>
+          <option value="fr">🇫🇷 Français</option>
+          <option value="de">🇩🇪 Deutsch</option>
+          <option value="es">🇪🇸 Español</option>
+          <option value="zh">🇨🇳 中文</option>
+          <option value="ja">🇯🇵 日本語</option>
+          <option value="ko">🇰🇷 한국어</option>
+          <option value="tr">🇹🇷 Türkçe</option>
+          <option value="ru">🇷🇺 Русский</option>
+          <option value="hi">🇮🇳 हिन्दी</option>
+          <option value="ur">🇵🇰 اردو</option>
+        </select>
+      </div>
+      <div class="top-bar-title">⚡ GraTech Commander</div>
+      <div class="top-bar-actions">
+        <button id="attach-file-btn" class="top-btn" title="إرفاق ملف">📎</button>
+        <button id="quick-note-btn" class="top-btn" title="ملاحظة سريعة">📝</button>
+        <button id="export-btn" class="top-btn" title="تصدير">📤</button>
+      </div>
+    </div>
+    
+    <div class="main-wrapper">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="logo">
+        <h1>⚡ GraTech</h1>
+        <span class="version">Commander v1.0</span>
+      </div>
+      
+      <nav class="nav-menu">
+        <button class="nav-btn active" data-view="chat">
+          💬 المحادثة
+        </button>
+        <button class="nav-btn" data-view="vault">
+          🔐 الخزنة
+        </button>
+        <button class="nav-btn" data-view="notes">
+          📝 ملاحظاتي
+        </button>
+        <button class="nav-btn" data-view="github">
+          🐙 GitHub
+        </button>
+        <button class="nav-btn" data-view="azure">
+          ☁️ Azure
+        </button>
+        <button class="nav-btn" data-view="accounts">
+          👤 حساباتي
+        </button>
+        <button class="nav-btn" data-view="settings">
+          ⚙️ الإعدادات
+        </button>
+        <button class="nav-btn" data-view="safety">
+          🛡️ الحماية
+        </button>
+      </nav>
+      
+      <div class="sidebar-footer">
+        <p>صنع بـ ❤️ بواسطة</p>
+        <strong>سليمان نزال الشمري</strong>
+        <div class="footer-accounts">
+          <a href="https://github.com/Grar00t" target="_blank">@Grar00t</a>
+          <span>|</span>
+          <a href="https://github.com/GrAxOS" target="_blank">@GrAxOS</a>
+        </div>
+        <span class="company-link">🌐 <a href="https://gratech.sa" target="_blank">GraTech.sa</a></span>
+        <span class="email-link">📧 <a href="mailto:admin@gratech.sa">admin@gratech.sa</a></span>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Chat View -->
+      <section id="chat-view" class="view active">
+        <div class="view-header">
+          <h2>💬 المحادثة مع الذكاء الاصطناعي</h2>
+          <select id="model-select" class="model-selector">
+            <option value="claude-opus-4-5">Claude Opus 4.5 🧠</option>
+            <option value="gpt-4.1">GPT-4.1</option>
+            <option value="DeepSeek-R1">DeepSeek R1 🔥</option>
+            <option value="gpt-4o">GPT-4o</option>
+            <option value="DeepSeek-V3.2">DeepSeek V3.2</option>
+          </select>
+        </div>
+        
+        <div class="chat-container" id="chat-container">
+          <div class="welcome-message">
+            <h3>مرحباً يا سليمان! 👋</h3>
+            <p>أنا جاهز للمساعدة. اختر النموذج وابدأ المحادثة.</p>
+          </div>
+        </div>
+        
+        <div class="chat-input-area">
+          <div class="smart-suggestions" id="smart-suggestions">
+            <!-- اقتراحات ذكية تظهر هنا -->
+          </div>
+          <div class="input-mode-selector">
+            <button class="mode-btn active" data-mode="normal">💬 عادي</button>
+            <button class="mode-btn" data-mode="code">💻 كود</button>
+            <button class="mode-btn" data-mode="safe">🔒 آمن</button>
+            <button class="mode-btn" data-mode="research">🔍 بحث</button>
+          </div>
+          <textarea 
+            id="message-input" 
+            placeholder="اكتب بالعربي براحتك... أنا أفهمك 😊"
+            rows="3"
+          ></textarea>
+          <div class="input-actions">
+            <button id="translate-btn" class="action-btn" title="ترجم لبرومبت">🔄 حوّل</button>
+            <button id="hide-secrets-btn" class="action-btn" title="أخفي الأسرار">🙈 أخفي</button>
+            <button id="send-btn" class="send-button">إرسال ▶</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- GitHub View -->
+      <section id="github-view" class="view">
+        <div class="view-header">
+          <h2>🐙 GitHub Dashboard</h2>
+        </div>
+        <div class="github-content">
+          <div class="github-stats">
+            <div class="stat-card">
+              <span class="stat-icon">📦</span>
+              <h3 id="repos-count">-</h3>
+              <p>المستودعات</p>
+            </div>
+            <div class="stat-card">
+              <span class="stat-icon">⭐</span>
+              <h3 id="stars-count">-</h3>
+              <p>النجوم</p>
+            </div>
+            <div class="stat-card">
+              <span class="stat-icon">👥</span>
+              <h3 id="followers-count">-</h3>
+              <p>المتابعين</p>
+            </div>
+          </div>
+          <div class="repos-list" id="repos-list">
+            <p class="loading">جاري التحميل...</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Azure View -->
+      <section id="azure-view" class="view">
+        <div class="view-header">
+          <h2>☁️ Azure Cloud Status</h2>
+        </div>
+        <div class="azure-content">
+          <div class="azure-info">
+            <div class="info-card">
+              <h4>🎓 Academic Subscription</h4>
+              <code id="azure-sub">376e945d-1f65-4f42-885e-ed9efda6716f</code>
+            </div>
+            <div class="info-card">
+              <h4>📍 Project</h4>
+              <p>alshammaris-2770 (East US 2)</p>
+            </div>
+            <div class="info-card">
+              <h4>🔗 Microsoft Foundry</h4>
+              <p>متصل ✅</p>
+            </div>
+          </div>
+          <div class="models-grid">
+            <div class="model-card">
+              <h4>🧠 Claude Opus 4.5</h4>
+              <span class="status online">متوفر</span>
+            </div>
+            <div class="model-card">
+              <h4>💬 GPT-4.1</h4>
+              <span class="status online">متوفر</span>
+            </div>
+            <div class="model-card">
+              <h4>🔥 DeepSeek R1</h4>
+              <span class="status online">متوفر</span>
+            </div>
+            <div class="model-card">
+              <h4>⚡ DeepSeek V3.2</h4>
+              <span class="status online">متوفر</span>
+            </div>
+            <div class="model-card">
+              <h4>🚀 GPT-4o</h4>
+              <span class="status online">متوفر</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Settings View -->
+      <section id="settings-view" class="view">
+        <div class="view-header">
+          <h2>⚙️ الإعدادات</h2>
+        </div>
+        <div class="settings-content">
+          <div class="setting-group">
+            <label>🔑 Microsoft Foundry API Key</label>
+            <input type="password" id="azure-api-key" placeholder="أدخل مفتاح API" value="">
+          </div>
+          <div class="setting-group">
+            <label>🌐 Foundry Endpoint</label>
+            <input type="text" id="azure-endpoint" placeholder="https://your-resource.services.ai.azure.com/" value="">
+          </div>
+          <div class="setting-group">
+            <label>🐙 GitHub Token</label>
+            <input type="password" id="github-token" placeholder="ghp_xxxxxxxxxxxx">
+          </div>
+          <button id="save-settings" class="save-btn">💾 حفظ الإعدادات</button>
+          <p class="settings-note">يتم حفظ الإعدادات محلياً على جهازك فقط. استخدم Environment Variables للـ API keys.</p>
+        </div>
+      </section>
+
+      <!-- Vault View - الخزنة -->
+      <section id="vault-view" class="view">
+        <div class="view-header">
+          <h2>🔐 الخزنة السرية</h2>
+          <button id="add-vault-item" class="add-btn">+ إضافة</button>
+        </div>
+        <div class="vault-content">
+          <div class="vault-categories">
+            <button class="vault-cat active" data-cat="keys" onclick="filterVaultCategory('keys')">🔑 مفاتيح API</button>
+            <button class="vault-cat" data-cat="accounts" onclick="filterVaultCategory('accounts')">👤 حسابات</button>
+            <button class="vault-cat" data-cat="files" onclick="filterVaultCategory('files')">📁 ملفات مهمة</button>
+            <button class="vault-cat" data-cat="secrets" onclick="filterVaultCategory('secrets')">🤫 أسرار</button>
+          </div>
+          <div class="vault-items" id="vault-items">
+            <div class="vault-item">
+              <div class="vault-item-icon">🔑</div>
+              <div class="vault-item-info">
+                <h4>Microsoft Foundry (Academic)</h4>
+                <p>alshammaris-2770</p>
+                <code class="hidden-key">BLB5uq...GT8UC</code>
+              </div>
+              <button class="copy-btn" title="نسخ">📋</button>
+            </div>
+            <div class="vault-item">
+              <div class="vault-item-icon">🔑</div>
+              <div class="vault-item-info">
+                <h4>GraTech AOAI (UAE)</h4>
+                <p>gratech-aoai</p>
+                <code class="hidden-key">2OO3Hj...fwA3</code>
+              </div>
+              <button class="copy-btn" title="نسخ">📋</button>
+            </div>
+            <div class="vault-item">
+              <div class="vault-item-icon">🔑</div>
+              <div class="vault-item-info">
+                <h4>Ameen OpenAI</h4>
+                <p>ameen-openai-prod</p>
+                <code class="hidden-key">DiJBS...8RFF</code>
+              </div>
+              <button class="copy-btn" title="نسخ">📋</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Notes View - الملاحظات -->
+      <section id="notes-view" class="view">
+        <div class="view-header">
+          <h2>📝 ملاحظاتي</h2>
+          <button id="add-note" class="add-btn">+ ملاحظة جديدة</button>
+        </div>
+        <div class="notes-content">
+          <div class="notes-sidebar">
+            <div class="notes-search">
+              <input type="text" placeholder="🔍 بحث..." id="notes-search">
+            </div>
+            <div class="notes-list" id="notes-list">
+              <div class="note-item active">
+                <span class="note-emoji">💡</span>
+                <div class="note-preview">
+                  <h5>أفكار GraTech</h5>
+                  <p>نقلة نوعية في الذكاء الاصطناعي...</p>
+                </div>
+              </div>
+              <div class="note-item">
+                <span class="note-emoji">🎯</span>
+                <div class="note-preview">
+                  <h5>أهداف 2025</h5>
+                  <p>إطلاق GraTech Commander...</p>
+                </div>
+              </div>
+              <div class="note-item">
+                <span class="note-emoji">📊</span>
+                <div class="note-preview">
+                  <h5>شراكة Ghala Rafaa</h5>
+                  <p>تفاصيل الشراكة...</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="note-editor">
+            <div class="note-editor-header">
+              <input type="text" class="note-title" placeholder="عنوان الملاحظة..." value="💡 أفكار GraTech">
+              <div class="note-tags">
+                <span class="tag">مهم</span>
+                <span class="tag">أفكار</span>
+                <button class="add-tag">+</button>
+              </div>
+            </div>
+            <textarea class="note-content" placeholder="اكتب ملاحظتك هنا...">🚀 نقلة نوعية في الذكاء الاصطناعي
+
+GraTech Commander - تطبيق Desktop يجمع:
+✅ محادثة AI متعددة النماذج
+✅ إدارة المفاتيح والحسابات
+✅ ملاحظات ذكية
+✅ تكامل GitHub و Azure
+
+الهدف: أقوى من Notion + Claude Desktop معاً!
+
+📈 خطة النشر:
+- GitHub: مفتوح المصدر مع Premium features
+- Azure Marketplace: اشتراكات شهرية
+- الربح المتوقع: $$$</textarea>
+            <div class="note-footer">
+              <span class="note-date">📅 26 ديسمبر 2025</span>
+              <div class="note-actions">
+                <button class="note-action">📎 إرفاق</button>
+                <button class="note-action">🔗 ربط</button>
+                <button class="note-action">📤 تصدير</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Accounts View - حساباتي -->
+      <section id="accounts-view" class="view">
+        <div class="view-header">
+          <h2>👤 حساباتي</h2>
+        </div>
+        <div class="accounts-content">
+          <div class="account-card primary">
+            <div class="account-avatar">👨‍💻</div>
+            <div class="account-info">
+              <h3>GrAtech X</h3>
+              <p>admin@gratech.sa</p>
+              <span class="account-type">🏢 Business - Primary</span>
+            </div>
+            <span class="account-status active">✅ متصل</span>
+          </div>
+          <div class="account-card">
+            <div class="account-avatar">🎓</div>
+            <div class="account-info">
+              <h3>SULIMAN NAZAL ALSHAMMARI</h3>
+              <p>alshammaris@ksau-hs.edu.sa</p>
+              <span class="account-type">🎓 Academic</span>
+            </div>
+            <span class="account-status active">✅ متصل</span>
+          </div>
+          <div class="account-card">
+            <div class="account-avatar">☁️</div>
+            <div class="account-info">
+              <h3>sulaiman alshammari</h3>
+              <p>admin@gratechksa.onmicrosoft.com</p>
+              <span class="account-type">☁️ M365 Tenant</span>
+            </div>
+            <span class="account-status active">✅ متصل</span>
+          </div>
+          <div class="account-card">
+            <div class="account-avatar">📧</div>
+            <div class="account-info">
+              <h3>shammar amar</h3>
+              <p>shammar403@gmail.com</p>
+              <span class="account-type">📧 Personal</span>
+            </div>
+            <span class="account-status">✅ متصل</span>
+          </div>
+          <div class="accounts-github">
+            <h3>🐙 GitHub Accounts</h3>
+            <div class="github-accounts-grid">
+              <a href="https://github.com/Grar00t" target="_blank" class="github-account">
+                <span>@Grar00t</span>
+                <small>Personal</small>
+              </a>
+              <a href="https://github.com/gratechx" target="_blank" class="github-account primary">
+                <span>@gratechx</span>
+                <small>Organization ⭐</small>
+              </a>
+              <a href="https://github.com/GrAxOS" target="_blank" class="github-account">
+                <span>@GrAxOS</span>
+                <small>OS Project</small>
+              </a>
+            </div>
+          </div>
+          <div class="accounts-partners">
+            <h3>🤝 الشراكات</h3>
+            <div class="partner-card">
+              <img src="https://ghala-rafaa-al-omairi-company-llc.dmc-microsite.com/favicon.ico" alt="Ghala Rafaa" onerror="this.style.display='none'">
+              <div class="partner-info">
+                <h4>Ghala Rafaa Al-Omairi Company LLC</h4>
+                <a href="https://ghala-rafaa-al-omairi-company-llc.dmc-microsite.com/" target="_blank">🔗 الموقع</a>
+              </div>
+              <span class="partner-status">🤝 شريك محتمل</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Safety View - نظام الحماية -->
+      <section id="safety-view" class="view">
+        <div class="view-header">
+          <h2>🛡️ نظام الحماية الذكي</h2>
+        </div>
+        <div class="safety-content">
+          <!-- فلسفة النظام -->
+          <div class="safety-philosophy">
+            <div class="philosophy-card">
+              <h3>🙏 فلسفتنا</h3>
+              <blockquote>
+                "أنا هنا لخدمتك، مو أداة عليك.<br>
+                القرار لك دائماً - وأنا أشرح وأنصح فقط."
+              </blockquote>
+            </div>
+          </div>
+
+          <!-- مستويات الخطورة -->
+          <div class="risk-levels">
+            <h3>📊 مستويات الخطورة</h3>
+            <div class="risk-grid">
+              <div class="risk-card safe">
+                <span class="risk-icon">🟢</span>
+                <h4>آمن</h4>
+                <p>قراءة، عرض</p>
+                <small>بدون تأكيد</small>
+              </div>
+              <div class="risk-card low">
+                <span class="risk-icon">🟡</span>
+                <h4>منخفض</h4>
+                <p>إنشاء جديد</p>
+                <small>تأكيد بسيط</small>
+              </div>
+              <div class="risk-card medium">
+                <span class="risk-icon">🟠</span>
+                <h4>متوسط</h4>
+                <p>تعديل، تنفيذ</p>
+                <small>تأكيد + شرح</small>
+              </div>
+              <div class="risk-card high">
+                <span class="risk-icon">🔴</span>
+                <h4>عالي</h4>
+                <p>حذف، نشر</p>
+                <small>تأكيد مزدوج</small>
+              </div>
+              <div class="risk-card critical">
+                <span class="risk-icon">⛔</span>
+                <h4>حرج</h4>
+                <p>تدمير، Azure Prod</p>
+                <small>تأكيد + سكرين شوت</small>
+              </div>
+            </div>
+          </div>
+
+          <!-- سجل الموافقات -->
+          <div class="consent-log">
+            <h3>📜 سجل الموافقات</h3>
+            <div class="consent-stats">
+              <div class="stat-box approved">
+                <span class="stat-number" id="total-consents">0</span>
+                <span class="stat-label">موافقات ✅</span>
+              </div>
+              <div class="stat-box denied">
+                <span class="stat-number" id="total-denials">0</span>
+                <span class="stat-label">مرفوضات ❌</span>
+              </div>
+              <div class="stat-box protected">
+                <span class="stat-number" id="protected-actions">0</span>
+                <span class="stat-label">عمليات محمية 🛡️</span>
+              </div>
+            </div>
+            <div class="consent-list" id="consent-list">
+              <p class="empty-state">لا توجد موافقات بعد - النظام جاهز لحمايتك! 🛡️</p>
+            </div>
+          </div>
+
+          <!-- قواعد الحماية -->
+          <div class="safety-rules">
+            <h3>⚖️ قواعد الحماية</h3>
+            <div class="rules-list">
+              <div class="rule-item">
+                <input type="checkbox" id="rule-confirm-delete" checked disabled>
+                <label>🗑️ تأكيد قبل أي حذف</label>
+              </div>
+              <div class="rule-item">
+                <input type="checkbox" id="rule-confirm-azure" checked disabled>
+                <label>☁️ تأكيد قبل أي عملية Azure</label>
+              </div>
+              <div class="rule-item">
+                <input type="checkbox" id="rule-explain" checked disabled>
+                <label>📝 شرح كل عملية قبل التنفيذ</label>
+              </div>
+              <div class="rule-item">
+                <input type="checkbox" id="rule-alternatives" checked disabled>
+                <label>💡 اقتراح بدائل آمنة</label>
+              </div>
+              <div class="rule-item">
+                <input type="checkbox" id="rule-screenshot" checked>
+                <label>📸 حفظ سكرين شوت للعمليات الحرجة</label>
+              </div>
+              <div class="rule-item">
+                <input type="checkbox" id="rule-log" checked disabled>
+                <label>📜 تسجيل كل الموافقات</label>
+              </div>
+            </div>
+          </div>
+
+          <!-- زر الطوارئ -->
+          <div class="emergency-section">
+            <button id="emergency-stop" class="emergency-btn">
+              🚨 إيقاف طوارئ
+            </button>
+            <p class="emergency-note">يوقف جميع العمليات فوراً</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Quick Note Modal -->
+    <div id="quick-note-modal" class="modal hidden">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>📝 ملاحظة سريعة</h3>
+          <button class="close-modal">&times;</button>
+        </div>
+        <textarea id="quick-note-text" placeholder="اكتب ملاحظتك السريعة..."></textarea>
+        <div class="modal-actions">
+          <button id="save-quick-note" class="save-btn">💾 حفظ</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- File Attach Modal -->
+    <div id="attach-modal" class="modal hidden">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>📎 إرفاق ملف</h3>
+          <button class="close-modal">&times;</button>
+        </div>
+        <div class="attach-dropzone" id="dropzone">
+          <p>📁 اسحب الملفات هنا</p>
+          <p>أو</p>
+          <input type="file" id="file-input" multiple>
+          <button id="browse-files" class="browse-btn">تصفح الملفات</button>
+        </div>
+        <div class="attached-files" id="attached-files"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="translator.js"></script>
+  <script src="safety.js"></script>
+  <script src="renderer.js"></script>
+</body>
+</html>
+

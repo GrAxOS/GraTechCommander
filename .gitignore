@@ -1,0 +1,26 @@
+# .gitignore for GraTechCommander
+
+# Build outputs
+bin/
+obj/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.cache
+
+# Node modules (if any)
+node_modules/
+
+# Logs
+*.log
+
+# Secrets (NEVER commit these!)
+appsettings.Development.json
+secrets.json
+*.env
+
+# Temp files
+*.tmp
+~$*
