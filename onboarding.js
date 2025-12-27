@@ -1,6 +1,7 @@
 // ============================================
 // 🎉 GraTech Commander - Onboarding Wizard
 // By Suliman Alshammari @Grar00t
+// "Your AI, Your Way, Your Language" 🌍
 // ============================================
 
 let currentStep = 1;
@@ -15,24 +16,104 @@ document.addEventListener('DOMContentLoaded', () => {
   if (onboardingCompleted === 'true') {
     hideOnboarding();
   }
+  
+  // Initialize language-aware onboarding
+  initOnboardingI18n();
 });
+
+// Initialize onboarding with i18n
+function initOnboardingI18n() {
+  // Listen for language changes
+  window.addEventListener('languageChanged', (e) => {
+    updateOnboardingLanguage(e.detail.lang);
+  });
+  
+  // Set initial language
+  const savedLang = localStorage.getItem('gratech_lang') || 'ar';
+  updateOnboardingLanguage(savedLang);
+}
+
+// Update onboarding text based on language
+function updateOnboardingLanguage(lang) {
+  if (!window.i18n || !window.i18n[lang]) return;
+  
+  const t = window.i18n[lang];
+  
+  // Step 1: Welcome
+  const welcomeTitle = document.querySelector('.onboarding-step[data-step="1"] .gradient-text');
+  if (welcomeTitle) welcomeTitle.textContent = t.welcome || welcomeTitle.textContent;
+  
+  const subtitle = document.querySelector('.onboarding-step[data-step="1"] .subtitle');
+  if (subtitle) subtitle.textContent = t.subtitle || subtitle.textContent;
+  
+  // Features
+  const featureCards = document.querySelectorAll('.feature-card p');
+  if (featureCards.length >= 4) {
+    featureCards[0].textContent = t.feature_models || featureCards[0].textContent;
+    featureCards[1].textContent = t.feature_privacy || featureCards[1].textContent;
+    featureCards[2].textContent = t.feature_arabic || featureCards[2].textContent;
+    featureCards[3].textContent = t.feature_safety || featureCards[3].textContent;
+  }
+  
+  // Buttons
+  document.querySelectorAll('.onboarding-btn.primary').forEach(btn => {
+    if (btn.onclick?.toString().includes('nextStep')) {
+      btn.innerHTML = t.next || btn.innerHTML;
+    }
+    if (btn.onclick?.toString().includes('finishOnboarding')) {
+      btn.innerHTML = t.startChat || btn.innerHTML;
+    }
+  });
+  
+  document.querySelectorAll('.onboarding-btn.secondary').forEach(btn => {
+    btn.innerHTML = t.back || btn.innerHTML;
+  });
+  
+  // Step 2: Model Selection
+  const modelTitle = document.querySelector('.onboarding-step[data-step="2"] h2');
+  if (modelTitle) modelTitle.textContent = t.chooseModel || modelTitle.textContent;
+  
+  // Step 3: API Setup
+  const apiTitle = document.querySelector('.onboarding-step[data-step="3"] h2');
+  if (apiTitle) apiTitle.textContent = t.apiSetup || apiTitle.textContent;
+  
+  // Step 4: Safety
+  const safetyTitle = document.querySelector('.onboarding-step[data-step="4"] h2');
+  if (safetyTitle) safetyTitle.textContent = t.safetyTitle || safetyTitle.textContent;
+  
+  // Step 5: Ready
+  const readyTitle = document.querySelector('.onboarding-step[data-step="5"] .gradient-text');
+  if (readyTitle) readyTitle.textContent = t.ready || readyTitle.textContent;
+}
 
 // Navigate to next step
 function nextStep() {
   if (currentStep < totalSteps) {
-    document.querySelector(`.onboarding-step[data-step="${currentStep}"]`).classList.remove('active');
+    const currentEl = document.querySelector(`.onboarding-step[data-step="${currentStep}"]`);
+    currentEl.classList.remove('active');
+    currentEl.style.animation = 'slideOut 0.3s ease forwards';
+    
     currentStep++;
-    document.querySelector(`.onboarding-step[data-step="${currentStep}"]`).classList.add('active');
-    updateProgressDots();
+    
+    setTimeout(() => {
+      const nextEl = document.querySelector(`.onboarding-step[data-step="${currentStep}"]`);
+      nextEl.classList.add('active');
+      nextEl.style.animation = 'slideIn 0.5s ease';
+      updateProgressDots();
+    }, 300);
   }
 }
 
 // Navigate to previous step
 function prevStep() {
   if (currentStep > 1) {
-    document.querySelector(`.onboarding-step[data-step="${currentStep}"]`).classList.remove('active');
+    const currentEl = document.querySelector(`.onboarding-step[data-step="${currentStep}"]`);
+    currentEl.classList.remove('active');
+    
     currentStep--;
-    document.querySelector(`.onboarding-step[data-step="${currentStep}"]`).classList.add('active');
+    
+    const prevEl = document.querySelector(`.onboarding-step[data-step="${currentStep}"]`);
+    prevEl.classList.add('active');
     updateProgressDots();
   }
 }
@@ -43,8 +124,11 @@ function updateProgressDots() {
     const step = parseInt(dot.dataset.step);
     if (step === currentStep) {
       dot.classList.add('active');
-    } else {
+    } else if (step < currentStep) {
+      dot.classList.add('completed');
       dot.classList.remove('active');
+    } else {
+      dot.classList.remove('active', 'completed');
     }
   });
 }
@@ -52,13 +136,23 @@ function updateProgressDots() {
 // Select AI Model
 function selectModel(element) {
   // Remove selection from all
-  document.querySelectorAll('.model-option').forEach(opt => opt.classList.remove('selected'));
-  // Add to clicked
+  document.querySelectorAll('.model-option').forEach(opt => {
+    opt.classList.remove('selected');
+    opt.style.transform = '';
+  });
+  
+  // Add to clicked with animation
   element.classList.add('selected');
+  element.style.transform = 'scale(1.02)';
   selectedModel = element.dataset.model;
   
   // Save to localStorage
   localStorage.setItem('gratech_default_model', selectedModel);
+  
+  // Haptic feedback on mobile
+  if (navigator.vibrate) {
+    navigator.vibrate(50);
+  }
 }
 
 // Select API Option
@@ -69,12 +163,16 @@ function selectApiOption(element) {
   element.classList.add('selected');
   selectedApiOption = element.dataset.option;
   
-  // Show/hide BYOK fields
+  // Show/hide BYOK fields with animation
   const byokFields = document.getElementById('byok-fields');
   if (selectedApiOption === 'byok') {
     byokFields.classList.remove('hidden');
+    byokFields.style.animation = 'slideIn 0.3s ease';
   } else {
-    byokFields.classList.add('hidden');
+    byokFields.style.animation = 'slideOut 0.3s ease';
+    setTimeout(() => {
+      byokFields.classList.add('hidden');
+    }, 300);
   }
 }
 
@@ -111,8 +209,24 @@ function finishOnboarding() {
     modelSelect.value = selectedModel;
   }
   
-  // Show welcome toast
-  showToast('🎉 مرحباً بك في GraTech Commander!');
+  // Show welcome toast (language-aware)
+  const lang = localStorage.getItem('gratech_lang') || 'ar';
+  const welcomeMessages = {
+    ar: '🎉 مرحباً بك في GraTech Commander!',
+    en: '🎉 Welcome to GraTech Commander!',
+    fr: '🎉 Bienvenue sur GraTech Commander!',
+    de: '🎉 Willkommen bei GraTech Commander!',
+    es: '🎉 ¡Bienvenido a GraTech Commander!',
+    zh: '🎉 欢迎使用 GraTech Commander!',
+    ja: '🎉 GraTech Commander へようこそ!',
+    ko: '🎉 GraTech Commander에 오신 것을 환영합니다!',
+    tr: '🎉 GraTech Commander\'a Hoş Geldiniz!',
+    ru: '🎉 Добро пожаловать в GraTech Commander!',
+    hi: '🎉 GraTech Commander में आपका स्वागत है!',
+    ur: '🎉 GraTech Commander میں خوش آمدید!'
+  };
+  
+  showToast(welcomeMessages[lang] || welcomeMessages.en);
 }
 
 // Skip onboarding permanently
@@ -128,29 +242,39 @@ function hideOnboarding() {
     overlay.style.animation = 'fadeOut 0.5s ease forwards';
     setTimeout(() => {
       overlay.classList.add('hidden');
+      overlay.style.display = 'none';
     }, 500);
   }
 }
 
 // Show toast notification
-function showToast(message) {
+function showToast(message, type = 'success') {
   // Create toast element
   const toast = document.createElement('div');
-  toast.className = 'toast-notification';
+  toast.className = `toast-notification toast-${type}`;
   toast.innerHTML = message;
+  
+  const bgColors = {
+    success: 'linear-gradient(135deg, #00d4ff, #7c3aed)',
+    error: 'linear-gradient(135deg, #ef4444, #dc2626)',
+    warning: 'linear-gradient(135deg, #f59e0b, #d97706)',
+    info: 'linear-gradient(135deg, #3b82f6, #2563eb)'
+  };
+  
   toast.style.cssText = `
     position: fixed;
     bottom: 30px;
     left: 50%;
     transform: translateX(-50%);
-    background: linear-gradient(135deg, #00d4ff, #7c3aed);
+    background: ${bgColors[type] || bgColors.success};
     color: white;
     padding: 15px 30px;
     border-radius: 30px;
     font-size: 16px;
     font-weight: 600;
     z-index: 10000;
-    animation: slideUp 0.5s ease, fadeOut 0.5s ease 2.5s forwards;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    animation: toastSlideUp 0.5s ease, toastFadeOut 0.5s ease 2.5s forwards;
   `;
   
   document.body.appendChild(toast);
@@ -166,19 +290,38 @@ function insertPrompt(text) {
   if (input) {
     input.value = text + ' ';
     input.focus();
+    
+    // Trigger input event for any listeners
+    input.dispatchEvent(new Event('input', { bubbles: true }));
   }
 }
 
-// Add fadeOut animation
+// Add animations
 const style = document.createElement('style');
 style.textContent = `
   @keyframes fadeOut {
     from { opacity: 1; }
     to { opacity: 0; }
   }
-  @keyframes slideUp {
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes slideOut {
+    from { opacity: 1; transform: translateY(0); }
+    to { opacity: 0; transform: translateY(-30px); }
+  }
+  @keyframes toastSlideUp {
     from { opacity: 0; transform: translateX(-50%) translateY(20px); }
     to { opacity: 1; transform: translateX(-50%) translateY(0); }
+  }
+  @keyframes toastFadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+  }
+  
+  .progress-dots .dot.completed {
+    background: #10b981;
   }
 `;
 document.head.appendChild(style);
@@ -202,6 +345,8 @@ window.finishOnboarding = finishOnboarding;
 window.skipOnboarding = skipOnboarding;
 window.insertPrompt = insertPrompt;
 window.resetOnboarding = resetOnboarding;
+window.showToast = showToast;
 
 console.log('🎉 GraTech Onboarding loaded!');
+console.log('🌍 i18n support enabled for 12 languages');
 console.log('💡 To reset onboarding: resetOnboarding()');
