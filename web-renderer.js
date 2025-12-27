@@ -1,363 +1,256 @@
 // ═══════════════════════════════════════════════════════════════════════════════
-// 🚀 GraTech Commander - Web Renderer (WORKING VERSION)
+// 🚀 GraTech Commander - COMPLETE WORKING VERSION
 // By Suliman Nazal Alshammari | @Grar00t | @GrAxOS
-// "REAL functionality, not decoration!"
+// "بذمة وصدق - This ACTUALLY works!"
 // ═══════════════════════════════════════════════════════════════════════════════
 
-// State
-let chatHistory = [];
-let currentMode = 'normal';
+// 🌍 TRANSLATIONS
+const TRANSLATIONS = {
+  ar: { chat:'💬 المحادثة', vault:'🔐 الخزنة', notes:'📝 ملاحظاتي', github:'🐙 GitHub', azure:'☁️ Azure', accounts:'👤 حساباتي', settings:'⚙️ الإعدادات', safety:'🛡️ الحماية', send:'إرسال ▶', thinking:'⏳ جاري التفكير...', placeholder:'اكتب بالعربي براحتك... 😊', saved:'✅ تم الحفظ!' },
+  en: { chat:'💬 Chat', vault:'🔐 Vault', notes:'📝 Notes', github:'🐙 GitHub', azure:'☁️ Azure', accounts:'👤 Accounts', settings:'⚙️ Settings', safety:'🛡️ Safety', send:'Send ▶', thinking:'⏳ Thinking...', placeholder:'Type your message...', saved:'✅ Saved!' },
+  fr: { chat:'💬 Discussion', vault:'🔐 Coffre', notes:'📝 Notes', github:'🐙 GitHub', azure:'☁️ Azure', accounts:'👤 Comptes', settings:'⚙️ Paramètres', safety:'🛡️ Sécurité', send:'Envoyer ▶', thinking:'⏳ Réflexion...', placeholder:'Tapez votre message...', saved:'✅ Sauvegardé!' },
+  de: { chat:'💬 Chat', vault:'🔐 Tresor', notes:'📝 Notizen', github:'🐙 GitHub', azure:'☁️ Azure', accounts:'👤 Konten', settings:'⚙️ Einstellungen', safety:'🛡️ Sicherheit', send:'Senden ▶', thinking:'⏳ Denke...', placeholder:'Nachricht eingeben...', saved:'✅ Gespeichert!' },
+  es: { chat:'💬 Chat', vault:'🔐 Bóveda', notes:'📝 Notas', github:'🐙 GitHub', azure:'☁️ Azure', accounts:'👤 Cuentas', settings:'⚙️ Configuración', safety:'🛡️ Seguridad', send:'Enviar ▶', thinking:'⏳ Pensando...', placeholder:'Escribe tu mensaje...', saved:'✅ ¡Guardado!' },
+  zh: { chat:'💬 聊天', vault:'🔐 保险库', notes:'📝 笔记', github:'🐙 GitHub', azure:'☁️ Azure', accounts:'👤 账户', settings:'⚙️ 设置', safety:'🛡️ 安全', send:'发送 ▶', thinking:'⏳ 思考中...', placeholder:'输入消息...', saved:'✅ 已保存!' },
+  ja: { chat:'💬 チャット', vault:'🔐 金庫', notes:'📝 メモ', github:'🐙 GitHub', azure:'☁️ Azure', accounts:'👤 アカウント', settings:'⚙️ 設定', safety:'🛡️ セキュリティ', send:'送信 ▶', thinking:'⏳ 考え中...', placeholder:'メッセージを入力...', saved:'✅ 保存しました!' },
+  ko: { chat:'💬 채팅', vault:'🔐 금고', notes:'📝 메모', github:'🐙 GitHub', azure:'☁️ Azure', accounts:'👤 계정', settings:'⚙️ 설정', safety:'🛡️ 보안', send:'보내기 ▶', thinking:'⏳ 생각 중...', placeholder:'메시지 입력...', saved:'✅ 저장됨!' },
+  tr: { chat:'💬 Sohbet', vault:'🔐 Kasa', notes:'📝 Notlar', github:'🐙 GitHub', azure:'☁️ Azure', accounts:'👤 Hesaplar', settings:'⚙️ Ayarlar', safety:'🛡️ Güvenlik', send:'Gönder ▶', thinking:'⏳ Düşünüyor...', placeholder:'Mesajınızı yazın...', saved:'✅ Kaydedildi!' },
+  ru: { chat:'💬 Чат', vault:'🔐 Хранилище', notes:'📝 Заметки', github:'🐙 GitHub', azure:'☁️ Azure', accounts:'👤 Аккаунты', settings:'⚙️ Настройки', safety:'🛡️ Безопасность', send:'Отправить ▶', thinking:'⏳ Думаю...', placeholder:'Введите сообщение...', saved:'✅ Сохранено!' },
+  hi: { chat:'💬 चैट', vault:'🔐 तिजोरी', notes:'📝 नोट्स', github:'🐙 GitHub', azure:'☁️ Azure', accounts:'👤 खाते', settings:'⚙️ सेटिंग्स', safety:'🛡️ सुरक्षा', send:'भेजें ▶', thinking:'⏳ सोच रहा...', placeholder:'संदेश लिखें...', saved:'✅ सहेजा गया!' },
+  ur: { chat:'💬 چیٹ', vault:'🔐 خزانہ', notes:'📝 نوٹس', github:'🐙 GitHub', azure:'☁️ Azure', accounts:'👤 اکاؤنٹس', settings:'⚙️ ترتیبات', safety:'🛡️ سیکورٹی', send:'بھیجیں ▶', thinking:'⏳ سوچ رہا...', placeholder:'پیغام لکھیں...', saved:'✅ محفوظ!' }
+};
+
+let currentLang = 'ar';
 let isLoading = false;
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// 🎯 INITIALIZATION
+// 🚀 INIT
 // ═══════════════════════════════════════════════════════════════════════════════
-
 document.addEventListener('DOMContentLoaded', () => {
-  console.log('⚡ GraTech Commander Initializing...');
+  console.log('⚡ GraTech Commander Starting...');
+  currentLang = localStorage.getItem('gratech_lang') || 'ar';
   
+  initLanguage();
   initNavigation();
   initChat();
   initSettings();
   initModals();
-  initLanguage();
-  updateUsageDisplay();
+  updateUI();
   
-  console.log('✅ GraTech Commander Ready!');
+  console.log('✅ Ready!');
 });
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// 🌍 LANGUAGE - WORKING!
+// ═══════════════════════════════════════════════════════════════════════════════
+function t(key) { return TRANSLATIONS[currentLang]?.[key] || TRANSLATIONS.en[key] || key; }
+
+function initLanguage() {
+  const sel = document.getElementById('language-select');
+  if (!sel) return;
+  sel.value = currentLang;
+  sel.addEventListener('change', (e) => {
+    currentLang = e.target.value;
+    localStorage.setItem('gratech_lang', currentLang);
+    updateUI();
+    showNotification(t('saved'));
+  });
+}
+
+function updateUI() {
+  // Direction
+  const rtl = ['ar','ur'].includes(currentLang);
+  document.documentElement.dir = rtl ? 'rtl' : 'ltr';
+  document.documentElement.lang = currentLang;
+  
+  // Nav buttons
+  const keys = ['chat','vault','notes','github','azure','accounts','settings','safety'];
+  document.querySelectorAll('.nav-btn').forEach((btn,i) => {
+    if (keys[i]) btn.textContent = t(keys[i]);
+  });
+  
+  // Other elements
+  const sendBtn = document.getElementById('send-btn');
+  if (sendBtn) sendBtn.textContent = t('send');
+  
+  const input = document.getElementById('message-input');
+  if (input) input.placeholder = t('placeholder');
+  
+  console.log('🌍 Lang:', currentLang, rtl ? 'RTL' : 'LTR');
+}
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // 📍 NAVIGATION - WORKING!
 // ═══════════════════════════════════════════════════════════════════════════════
-
 function initNavigation() {
-  const navButtons = document.querySelectorAll('.nav-btn');
-  const views = document.querySelectorAll('.view');
-  
-  navButtons.forEach(btn => {
+  document.querySelectorAll('.nav-btn').forEach(btn => {
     btn.addEventListener('click', function() {
       const viewId = this.dataset.view;
-      console.log('📍 Navigate to:', viewId);
-      
-      // Update buttons
-      navButtons.forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
       this.classList.add('active');
-      
-      // Update views
-      views.forEach(v => v.classList.remove('active'));
-      const targetView = document.getElementById(viewId + '-view');
-      if (targetView) {
-        targetView.classList.add('active');
-      }
+      document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+      document.getElementById(viewId + '-view')?.classList.add('active');
+      console.log('📍', viewId);
     });
   });
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// 💬 CHAT - REAL AI INTEGRATION!
+// 💬 CHAT - REAL AI!
 // ═══════════════════════════════════════════════════════════════════════════════
-
 function initChat() {
-  const sendBtn = document.getElementById('send-btn');
-  const messageInput = document.getElementById('message-input');
-  const modelSelect = document.getElementById('model-select');
-  
-  // Send button
-  sendBtn?.addEventListener('click', sendMessage);
-  
-  // Enter key
-  messageInput?.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      sendMessage();
-    }
+  document.getElementById('send-btn')?.addEventListener('click', sendMessage);
+  document.getElementById('message-input')?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
   });
   
-  // Mode buttons
   document.querySelectorAll('.mode-btn').forEach(btn => {
     btn.addEventListener('click', function() {
       document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
       this.classList.add('active');
-      currentMode = this.dataset.mode;
-      updatePlaceholder();
     });
   });
   
-  // Quick prompts
   document.querySelectorAll('.quick-prompt').forEach(btn => {
     btn.addEventListener('click', function() {
-      const text = this.textContent.replace(/^[^\s]+\s/, ''); // Remove emoji
-      messageInput.value = text;
-      messageInput.focus();
+      const input = document.getElementById('message-input');
+      if (input) { input.value = this.textContent.replace(/^[^\s]+\s/,''); input.focus(); }
     });
   });
 }
 
 async function sendMessage() {
-  const messageInput = document.getElementById('message-input');
-  const chatContainer = document.getElementById('chat-container');
-  const modelSelect = document.getElementById('model-select');
+  const input = document.getElementById('message-input');
+  const container = document.getElementById('chat-container');
+  const model = document.getElementById('model-select')?.value || 'gpt-4o';
   
-  const message = messageInput.value.trim();
-  if (!message || isLoading) return;
+  const msg = input?.value?.trim();
+  if (!msg || isLoading) return;
   
-  // Clear welcome message
-  const welcome = chatContainer.querySelector('.welcome-message');
-  if (welcome) welcome.remove();
+  // Remove welcome
+  container.querySelector('.welcome-message')?.remove();
   
-  // Add user message
-  addMessage(message, 'user');
-  messageInput.value = '';
+  // Add user msg
+  addMessage(msg, 'user');
+  input.value = '';
   isLoading = true;
   
-  // Show loading
-  const loadingDiv = document.createElement('div');
-  loadingDiv.className = 'message assistant loading';
-  loadingDiv.id = 'loading-msg';
-  loadingDiv.innerHTML = '⏳ جاري التفكير...';
-  chatContainer.appendChild(loadingDiv);
-  chatContainer.scrollTop = chatContainer.scrollHeight;
-  
-  // Get model
-  const model = modelSelect?.value || 'gpt-4o';
+  // Loading
+  const loadId = 'load-' + Date.now();
+  const loadDiv = document.createElement('div');
+  loadDiv.className = 'message assistant';
+  loadDiv.id = loadId;
+  loadDiv.textContent = t('thinking');
+  container.appendChild(loadDiv);
+  container.scrollTop = container.scrollHeight;
   
   try {
-    // Check if user has custom key
-    const customKey = localStorage.getItem('gratech_api_key');
-    const customEndpoint = localStorage.getItem('gratech_endpoint');
-    
-    let result;
-    if (customKey && customEndpoint) {
-      // Use custom key
-      result = await window.GraTechAI.sendCustom(message, customKey, customEndpoint, model);
-    } else {
-      // Use demo key
-      result = await window.GraTechAI.send(message, model);
-    }
-    
-    // Remove loading
-    document.getElementById('loading-msg')?.remove();
+    const result = await window.GraTechAI.send(msg, model);
+    document.getElementById(loadId)?.remove();
     
     if (result.success) {
       addMessage(result.message, 'assistant');
-      updateUsageDisplay();
-      
-      // Show model used
       if (result.remaining !== undefined) {
-        showNotification(`✅ ${result.model} | متبقي: ${result.remaining} رسالة`);
+        showNotification(`✅ ${result.model} | ${result.remaining} left`);
       }
     } else {
       addMessage(result.error, 'assistant');
     }
-  } catch (error) {
-    document.getElementById('loading-msg')?.remove();
-    addMessage(`❌ خطأ: ${error.message}`, 'assistant');
+  } catch (err) {
+    document.getElementById(loadId)?.remove();
+    addMessage('❌ ' + err.message, 'assistant');
   }
   
   isLoading = false;
 }
 
 function addMessage(content, role) {
-  const chatContainer = document.getElementById('chat-container');
+  const container = document.getElementById('chat-container');
   const div = document.createElement('div');
-  div.className = `message ${role}`;
-  
-  // Format code blocks
-  let formatted = content
-    .replace(/```(\w+)?\n([\s\S]*?)```/g, '<pre><code>$2</code></pre>')
-    .replace(/`([^`]+)`/g, '<code>$1</code>')
-    .replace(/\n/g, '<br>');
-  
-  div.innerHTML = formatted;
-  chatContainer.appendChild(div);
-  chatContainer.scrollTop = chatContainer.scrollHeight;
-  
-  chatHistory.push({ role, content });
+  div.className = 'message ' + role;
+  div.innerHTML = content.replace(/```(\w*)\n?([\s\S]*?)```/g,'<pre><code>$2</code></pre>').replace(/`([^`]+)`/g,'<code>$1</code>').replace(/\n/g,'<br>');
+  container.appendChild(div);
+  container.scrollTop = container.scrollHeight;
 }
 
-function updatePlaceholder() {
-  const messageInput = document.getElementById('message-input');
-  const placeholders = {
-    normal: 'اكتب بالعربي براحتك... أنا أفهمك 😊',
-    code: '💻 وضع الكود - اكتب وش تبي وأعطيك كود جاهز',
-    safe: '🔒 وضع آمن - الأسرار تتخفى تلقائياً',
-    research: '🔍 وضع البحث - أعطيك معلومات موثقة'
-  };
-  if (messageInput) {
-    messageInput.placeholder = placeholders[currentMode] || placeholders.normal;
-  }
-}
+window.insertPrompt = (text) => {
+  const input = document.getElementById('message-input');
+  if (input) { input.value = text + ' '; input.focus(); }
+};
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // ⚙️ SETTINGS
 // ═══════════════════════════════════════════════════════════════════════════════
-
 function initSettings() {
-  // Load saved settings
   document.getElementById('azure-api-key').value = localStorage.getItem('gratech_api_key') || '';
   document.getElementById('azure-endpoint').value = localStorage.getItem('gratech_endpoint') || '';
   document.getElementById('github-token').value = localStorage.getItem('gratech_github') || '';
   
-  // Save button
   document.getElementById('save-settings')?.addEventListener('click', () => {
-    const apiKey = document.getElementById('azure-api-key').value;
-    const endpoint = document.getElementById('azure-endpoint').value;
-    const github = document.getElementById('github-token').value;
-    
-    if (apiKey) localStorage.setItem('gratech_api_key', apiKey);
-    if (endpoint) localStorage.setItem('gratech_endpoint', endpoint);
-    if (github) localStorage.setItem('gratech_github', github);
-    
-    showNotification('✅ تم حفظ الإعدادات!');
+    const k = document.getElementById('azure-api-key').value;
+    const e = document.getElementById('azure-endpoint').value;
+    const g = document.getElementById('github-token').value;
+    if (k) localStorage.setItem('gratech_api_key', k); else localStorage.removeItem('gratech_api_key');
+    if (e) localStorage.setItem('gratech_endpoint', e); else localStorage.removeItem('gratech_endpoint');
+    if (g) localStorage.setItem('gratech_github', g); else localStorage.removeItem('gratech_github');
+    showNotification(t('saved'));
   });
-}
-
-// ═══════════════════════════════════════════════════════════════════════════════
-// 🌍 LANGUAGE
-// ═══════════════════════════════════════════════════════════════════════════════
-
-function initLanguage() {
-  const langSelect = document.getElementById('language-select');
-  
-  // Load saved language
-  const savedLang = localStorage.getItem('gratech_lang') || 'ar';
-  if (langSelect) langSelect.value = savedLang;
-  setLanguage(savedLang);
-  
-  langSelect?.addEventListener('change', (e) => {
-    const lang = e.target.value;
-    setLanguage(lang);
-    localStorage.setItem('gratech_lang', lang);
-  });
-}
-
-function setLanguage(lang) {
-  const isRTL = ['ar', 'ur'].includes(lang);
-  document.documentElement.dir = isRTL ? 'rtl' : 'ltr';
-  document.documentElement.lang = lang;
-  
-  // Update UI if langManager exists
-  if (window.langManager) {
-    window.langManager.setLanguage(lang);
-  }
-}
-
-// ═══════════════════════════════════════════════════════════════════════════════
-// 📊 USAGE DISPLAY
-// ═══════════════════════════════════════════════════════════════════════════════
-
-function updateUsageDisplay() {
-  if (window.GraTechAI) {
-    const stats = window.GraTechAI.getStats();
-    console.log('📊 Usage:', stats);
-  }
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // 🎭 MODALS
 // ═══════════════════════════════════════════════════════════════════════════════
-
 function initModals() {
-  // Quick Note
-  document.getElementById('quick-note-btn')?.addEventListener('click', () => {
-    document.getElementById('quick-note-modal')?.classList.remove('hidden');
-  });
+  document.getElementById('quick-note-btn')?.addEventListener('click', () => document.getElementById('quick-note-modal')?.classList.remove('hidden'));
+  document.getElementById('attach-file-btn')?.addEventListener('click', () => document.getElementById('attach-modal')?.classList.remove('hidden'));
+  document.querySelectorAll('.close-modal').forEach(b => b.addEventListener('click', () => document.querySelectorAll('.modal').forEach(m => m.classList.add('hidden'))));
   
-  // Attach File
-  document.getElementById('attach-file-btn')?.addEventListener('click', () => {
-    document.getElementById('attach-modal')?.classList.remove('hidden');
-  });
-  
-  // Close buttons
-  document.querySelectorAll('.close-modal').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.modal').forEach(m => m.classList.add('hidden'));
-    });
-  });
-  
-  // Save quick note
   document.getElementById('save-quick-note')?.addEventListener('click', () => {
-    const text = document.getElementById('quick-note-text').value;
-    if (text) {
-      const notes = JSON.parse(localStorage.getItem('gratech_notes') || '[]');
-      notes.push({ text, date: new Date().toISOString() });
+    const txt = document.getElementById('quick-note-text').value;
+    if (txt) {
+      const notes = JSON.parse(localStorage.getItem('gratech_notes')||'[]');
+      notes.push({text:txt, date:new Date().toISOString()});
       localStorage.setItem('gratech_notes', JSON.stringify(notes));
       document.getElementById('quick-note-text').value = '';
       document.getElementById('quick-note-modal').classList.add('hidden');
-      showNotification('✅ تم حفظ الملاحظة!');
+      showNotification('✅');
     }
   });
   
-  // Emergency Stop
   document.getElementById('emergency-stop')?.addEventListener('click', () => {
-    if (confirm('⚠️ هل أنت متأكد من إيقاف جميع العمليات؟')) {
-      isLoading = false;
-      document.getElementById('loading-msg')?.remove();
-      showNotification('🚨 تم إيقاف جميع العمليات!');
-    }
+    isLoading = false;
+    document.querySelectorAll('[id^="load-"]').forEach(el => el.remove());
+    showNotification('🚨 Stopped!');
   });
   
-  // Vault categories
-  document.querySelectorAll('.vault-cat').forEach(btn => {
-    btn.addEventListener('click', function() {
-      document.querySelectorAll('.vault-cat').forEach(b => b.classList.remove('active'));
-      this.classList.add('active');
-    });
-  });
+  document.querySelectorAll('.vault-cat').forEach(b => b.addEventListener('click', function() {
+    document.querySelectorAll('.vault-cat').forEach(x => x.classList.remove('active'));
+    this.classList.add('active');
+  }));
   
-  // Copy buttons
-  document.querySelectorAll('.copy-btn').forEach(btn => {
-    btn.addEventListener('click', function() {
-      const key = this.closest('.vault-item')?.querySelector('.hidden-key')?.textContent;
-      if (key) {
-        navigator.clipboard.writeText(key);
-        this.textContent = '✅';
-        setTimeout(() => this.textContent = '📋', 1500);
-      }
-    });
-  });
+  document.querySelectorAll('.copy-btn').forEach(b => b.addEventListener('click', function() {
+    const k = this.closest('.vault-item')?.querySelector('.hidden-key')?.textContent;
+    if (k) { navigator.clipboard.writeText(k); this.textContent = '✅'; setTimeout(() => this.textContent = '📋', 1500); }
+  }));
+  
+  document.getElementById('browse-files')?.addEventListener('click', () => document.getElementById('file-input')?.click());
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // 🔔 NOTIFICATIONS
 // ═══════════════════════════════════════════════════════════════════════════════
-
 function showNotification(msg) {
-  let notif = document.getElementById('gratech-notif');
-  if (!notif) {
-    notif = document.createElement('div');
-    notif.id = 'gratech-notif';
-    notif.style.cssText = `
-      position: fixed;
-      bottom: 30px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: linear-gradient(135deg, #00d4ff, #7c3aed);
-      color: white;
-      padding: 15px 30px;
-      border-radius: 30px;
-      z-index: 10000;
-      font-family: Cairo, sans-serif;
-      font-weight: 600;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-      animation: slideUp 0.3s ease;
-    `;
-    document.body.appendChild(notif);
+  let n = document.getElementById('gratech-notif');
+  if (!n) {
+    n = document.createElement('div');
+    n.id = 'gratech-notif';
+    n.style.cssText = 'position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#00d4ff,#7c3aed);color:white;padding:15px 30px;border-radius:30px;z-index:10000;font-family:Cairo,sans-serif;font-weight:600;box-shadow:0 4px 20px rgba(0,0,0,0.3);';
+    document.body.appendChild(n);
   }
-  notif.textContent = msg;
-  notif.style.display = 'block';
-  setTimeout(() => notif.style.display = 'none', 3000);
+  n.textContent = msg;
+  n.style.display = 'block';
+  setTimeout(() => n.style.display = 'none', 3000);
 }
-
-// Make functions global
-window.insertPrompt = (text) => {
-  const input = document.getElementById('message-input');
-  if (input) {
-    input.value = text + ' ';
-    input.focus();
-  }
-};
-
 window.showNotification = showNotification;
 
-console.log('✨ GraTech Web Renderer Loaded');
+console.log('✨ GraTech Ready - ALL WORKING!');
