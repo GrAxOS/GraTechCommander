@@ -1,32 +1,27 @@
 // ═══════════════════════════════════════════════════════════════════════════════
-// 🚀 GraTech Commander - AI API Integration (Secure Proxy Version)
+// 🚀 GraTech Commander - AI API Integration (PRODUCTION)
 // By Suliman Nazal Alshammari | @Grar00t | @GrAxOS
-// "Building with HONESTY - Not Vaporware" 
+// "Building with HONESTY - Not Vaporware!" 
 // ═══════════════════════════════════════════════════════════════════════════════
 
-// 🔒 API Configuration - Uses Azure Functions Proxy for security
+// 🔒 API Configuration - Uses Azure Functions Proxy
 const API_CONFIG = {
-  // Free demo proxy (rate limited)
+  // REAL Azure Function Proxy (your academic key is safe on server)
   proxyUrl: 'https://gratech-ai-proxy.azurewebsites.net/api/chat',
-  
-  // Direct Azure (if user has own key)
-  directEndpoint: null,
-  directKey: null,
   
   apiVersion: '2024-08-01-preview',
   
   // Available Models
   models: {
     'gpt-4o': { name: 'GPT-4o', icon: '🚀', description: 'الأسرع والأذكى' },
-    'gpt-4.1': { name: 'GPT-4.1', icon: '💬', description: 'متوازن' },
-    'gpt-35-turbo': { name: 'GPT-3.5', icon: '⚡', description: 'اقتصادي' }
+    'gpt-4': { name: 'GPT-4', icon: '💬', description: 'متوازن وقوي' },
+    'gpt-35-turbo': { name: 'GPT-3.5', icon: '⚡', description: 'اقتصادي وسريع' }
   }
 };
 
 // 🎯 Rate Limiting for Free Demo
 const RATE_LIMIT = {
-  maxRequestsPerHour: 20,
-  maxTokensPerRequest: 2000,
+  maxRequestsPerHour: 30,
   requests: [],
   
   canMakeRequest() {
@@ -60,14 +55,13 @@ const RATE_LIMIT = {
   }
 };
 
-// 🤖 AI Chat Function
+// 🤖 AI Chat Function - REAL API CALL
 async function sendToAI(message, model = 'gpt-4o') {
   // Check if user has custom key
   const customKey = localStorage.getItem('gratech_api_key');
   const customEndpoint = localStorage.getItem('gratech_endpoint');
   
   if (customKey && customEndpoint) {
-    // Use custom key - unlimited
     return await sendWithCustomKey(message, customKey, customEndpoint, model);
   }
   
@@ -75,13 +69,12 @@ async function sendToAI(message, model = 'gpt-4o') {
   if (!RATE_LIMIT.canMakeRequest()) {
     return {
       success: false,
-      error: '⚠️ وصلت للحد الأقصى (20 رسالة/ساعة)\n\n💡 للاستخدام غير المحدود:\n1. أدخل مفتاحك الخاص في الإعدادات\n2. أو انتظر ساعة واحدة'
+      error: `⚠️ وصلت للحد الأقصى (${RATE_LIMIT.maxRequestsPerHour} رسالة/ساعة)\n\n💡 للاستخدام غير المحدود:\n• أدخل مفتاحك الخاص في الإعدادات\n• أو انتظر ساعة واحدة`
     };
   }
   
-  // Call the proxy
   try {
-    console.log('🚀 Sending to GraTech AI Proxy...');
+    console.log('🚀 Sending to GraTech AI Proxy:', model);
     
     const response = await fetch(API_CONFIG.proxyUrl, {
       method: 'POST',
@@ -106,21 +99,26 @@ async function sendToAI(message, model = 'gpt-4o') {
         remaining: RATE_LIMIT.getRemainingRequests()
       };
     } else {
+      console.error('API Error:', data);
       return {
         success: false,
-        error: data.error || 'فشل في الاتصال'
+        error: data.error || 'فشل في الاتصال بالذكاء الاصطناعي'
       };
     }
   } catch (error) {
-    console.error('API Error:', error);
-    
-    // Fallback - show demo response
-    return getDemoResponse(message, model);
+    console.error('Network Error:', error);
+    return {
+      success: false,
+      error: `❌ خطأ في الشبكة: ${error.message}\n\n💡 تأكد من اتصالك بالإنترنت`
+    };
   }
 }
 
 // 🔄 Use Custom API Key (BYOK) - Unlimited
 async function sendWithCustomKey(message, apiKey, endpoint, model = 'gpt-4') {
+  // Clean endpoint
+  endpoint = endpoint.replace(/\/$/, '');
+  
   const url = `${endpoint}/openai/deployments/${model}/chat/completions?api-version=2024-08-01-preview`;
   
   const body = {
@@ -154,47 +152,22 @@ async function sendWithCustomKey(message, apiKey, endpoint, model = 'gpt-4') {
     } else {
       return { 
         success: false, 
-        error: data.error?.message || 'API Error' 
+        error: `❌ ${data.error?.message || 'خطأ في API'}\n\n💡 تأكد من صحة المفتاح والـ Endpoint`
       };
     }
   } catch (error) {
-    return { success: false, error: error.message };
+    return { 
+      success: false, 
+      error: `❌ ${error.message}` 
+    };
   }
 }
 
-// 🎮 Demo Response (fallback when proxy is unavailable)
-function getDemoResponse(message, model) {
-  const responses = {
-    'شرح': '💡 **شرح:**\n\nهذا سؤال رائع! دعني أشرح لك...\n\n*للحصول على إجابات حقيقية من الذكاء الاصطناعي، يرجى إدخال مفتاح API الخاص بك في الإعدادات.*',
-    'كود': '```javascript\n// مثال كود\nfunction greet() {\n  console.log("مرحباً من GraTech!");\n}\n```\n\n*للحصول على كود مخصص، أدخل مفتاح API الخاص بك.*',
-    'default': `🤖 **وضع العرض التوضيحي**\n\nشكراً على تجربة GraTech Commander!\n\n📝 رسالتك: "${message.substring(0, 50)}..."\n\n⚙️ النموذج: ${model}\n\n💡 للحصول على ردود حقيقية من AI:\n1. اذهب للإعدادات ⚙️\n2. أدخل مفتاح Azure OpenAI الخاص بك\n3. استمتع بمحادثات غير محدودة!\n\n🔗 احصل على مفتاح مجاني من:\nhttps://azure.microsoft.com/free/`
-  };
-  
-  const lowerMsg = message.toLowerCase();
-  let response = responses.default;
-  
-  if (lowerMsg.includes('شرح') || lowerMsg.includes('explain')) {
-    response = responses['شرح'];
-  } else if (lowerMsg.includes('كود') || lowerMsg.includes('code')) {
-    response = responses['كود'];
-  }
-  
-  RATE_LIMIT.recordRequest();
-  
-  return {
-    success: true,
-    message: response,
-    model: API_CONFIG.models[model]?.name || model,
-    remaining: RATE_LIMIT.getRemainingRequests(),
-    demo: true
-  };
-}
-
-// 🆔 Session ID for rate limiting
+// 🆔 Session ID
 function getSessionId() {
   let sid = localStorage.getItem('gratech_session');
   if (!sid) {
-    sid = 'gt_' + Math.random().toString(36).substr(2, 9);
+    sid = 'gt_' + Math.random().toString(36).substr(2, 9) + Date.now().toString(36);
     localStorage.setItem('gratech_session', sid);
   }
   return sid;
@@ -212,7 +185,7 @@ function getUsageStats() {
 // Initialize
 RATE_LIMIT.init();
 
-// Export for use
+// Export
 window.GraTechAI = {
   send: sendToAI,
   sendCustom: sendWithCustomKey,
@@ -220,5 +193,5 @@ window.GraTechAI = {
   models: API_CONFIG.models
 };
 
-console.log('🚀 GraTech AI Ready!');
-console.log('📊 Demo mode - Remaining:', RATE_LIMIT.getRemainingRequests(), 'requests');
+console.log('🚀 GraTech AI Ready! | Proxy: gratech-ai-proxy.azurewebsites.net');
+console.log('📊 Remaining:', RATE_LIMIT.getRemainingRequests(), '/', RATE_LIMIT.maxRequestsPerHour);
