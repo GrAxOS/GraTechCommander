@@ -1,35 +1,111 @@
 {
   "name": "gratech-commander",
   "version": "1.0.0",
-  "description": "GraTech AI Commander - Desktop App by Suliman Alshammari",
+  "description": "🚀 GraTech AI Commander - Your AI, Your Rules, Your Language",
   "main": "main.js",
+  "homepage": "https://gratech.sa",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/GrAxOS/GraTechCommander.git"
+  },
+  "bugs": {
+    "url": "https://github.com/GrAxOS/GraTechCommander/issues"
+  },
+  "keywords": [
+    "ai",
+    "chatgpt",
+    "claude",
+    "deepseek",
+    "arabic",
+    "desktop-app",
+    "electron",
+    "azure",
+    "openai",
+    "saudi",
+    "rtl",
+    "privacy-first"
+  ],
   "scripts": {
     "start": "electron .",
+    "dev": "electron . --dev",
     "build": "electron-builder",
-    "build:win": "electron-builder --win --x64"
+    "build:win": "electron-builder --win --x64",
+    "build:mac": "electron-builder --mac",
+    "build:linux": "electron-builder --linux",
+    "clean": "rimraf dist out",
+    "test": "echo \"No tests yet\" && exit 0"
   },
-  "author": "Suliman Nazal Alshammari <admin@gratech.sa>",
+  "author": {
+    "name": "Suliman Nazal Alshammari",
+    "email": "admin@gratech.sa",
+    "url": "https://gratech.sa"
+  },
+  "contributors": [
+    {
+      "name": "GraTech Team",
+      "url": "https://github.com/GrAxOS"
+    }
+  ],
   "license": "MIT",
   "devDependencies": {
     "electron": "^28.0.0",
-    "electron-builder": "^24.9.1"
+    "electron-builder": "^24.9.1",
+    "rimraf": "^5.0.5"
   },
   "dependencies": {
     "node-fetch": "^2.7.0"
   },
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "build": {
     "appId": "sa.gratech.commander",
     "productName": "GraTech Commander",
+    "copyright": "Copyright © 2025 GraTech",
     "directories": {
-      "output": "dist"
+      "output": "dist",
+      "buildResources": "assets"
     },
+    "files": [
+      "**/*",
+      "!**/*.md",
+      "!**/*.log",
+      "!.git/**",
+      "!.vscode/**"
+    ],
     "win": {
-      "target": "nsis",
-      "icon": "icon.ico"
+      "target": [
+        {
+          "target": "nsis",
+          "arch": ["x64", "ia32"]
+        },
+        {
+          "target": "portable",
+          "arch": ["x64"]
+        }
+      ],
+      "icon": "assets/icon.ico",
+      "publisherName": "GraTech"
+    },
+    "mac": {
+      "target": ["dmg", "zip"],
+      "icon": "assets/icon.icns",
+      "category": "public.app-category.productivity"
+    },
+    "linux": {
+      "target": ["AppImage", "deb"],
+      "icon": "assets/icon.png",
+      "category": "Utility"
     },
     "nsis": {
       "oneClick": false,
-      "allowToChangeInstallationDirectory": true
+      "allowToChangeInstallationDirectory": true,
+      "installerIcon": "assets/icon.ico",
+      "uninstallerIcon": "assets/icon.ico",
+      "installerHeaderIcon": "assets/icon.ico",
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "GraTech Commander"
     }
   }
 }

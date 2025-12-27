@@ -1,26 +1,96 @@
-# .gitignore for GraTechCommander
+# ============================================
+# 🛡️ GraTech Commander - .gitignore
+# ============================================
 
 # Build outputs
 bin/
 obj/
+dist/
+out/
+build/
 
 # Visual Studio
 .vs/
 *.user
 *.suo
 *.cache
+*.userosscache
+*.sln.docstates
 
-# Node modules (if any)
+# Visual Studio Code
+.vscode/
+*.code-workspace
+
+# JetBrains
+.idea/
+
+# Node.js
 node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+
+# Electron
+electron-builder.env
 
 # Logs
 *.log
+logs/
 
-# Secrets (NEVER commit these!)
+# 🔐 SECRETS (NEVER COMMIT!)
 appsettings.Development.json
+appsettings.Local.json
 secrets.json
 *.env
+.env.local
+.env.development
+.env.production
+*.pem
+*.key
+api_keys.txt
 
 # Temp files
 *.tmp
+*.temp
 ~$*
+.DS_Store
+Thumbs.db
+
+# Test coverage
+coverage/
+.nyc_output/
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Windows
+*.exe
+*.dll
+*.pdb
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Compiled files
+*.min.js
+*.min.css
+
+# Package files
+*.nupkg
+*.zip
+*.tar.gz
+
+# IDE settings (optional - uncomment if needed)
+# *.sublime-project
+# *.sublime-workspace
+
+# ============================================
+# 💡 Remember: Your API keys should NEVER 
+#    be committed to the repository!
+# ============================================
